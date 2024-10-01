@@ -5,7 +5,6 @@ class A2FHandlers:
     def __init__(self, host_url: str):  # Добавлено self
         self._host_url = host_url.rstrip('/')  # Удаляем слэш в конце, если есть
 
-
     def get_instances(self):  # Добавлено self
         response = requests.get(self._host_url + '/A2F/Player/GetInstances')
         
@@ -79,8 +78,7 @@ class A2FHandlers:
             return None  # Обработка исключений
 
 
-
 if __name__ == '__main__':
     a2fHandler = A2FHandlers(host_url="http://192.168.8.104:8011")
-    result = a2fHandler.play(a2f_player="/World/LazyGraph/Player")
+    result = a2fHandler.play(a2f_player="/World/audio2face/Player")
     print(result)
