@@ -25,4 +25,5 @@ def to_wav(path_to_mp3: str):
     print(f"Файл сохранен как {path_to_wav}")
 
 if __name__ == '__main__':
+    text_to_speach("привет сколько будет 20 + 52")
     to_wav(path_to_mp3="output.mp3")
