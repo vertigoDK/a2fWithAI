@@ -1,15 +1,14 @@
 import requests
+import os
 
 class A2FHandlers:
     
-    def __init__(self, host_url: str):  # Добавлено self
+    def __init__(self, host_url: str):
         self._host_url = host_url.rstrip('/')  # Удаляем слэш в конце, если есть
 
-
-    def get_instances(self):  # Добавлено self
+    def get_instances(self):
         response = requests.get(self._host_url + '/A2F/Player/GetInstances')
         
-        # Проверка статуса ответа
         if response.status_code == 200:
             return response.json()  # Возвращаем JSON-ответ
         else:
@@ -17,7 +16,6 @@ class A2FHandlers:
             return None  # Или можно вернуть ошибку
 
     def set_root_path(self, dir_path: str = None, a2f_player: str = None):
-        # Устанавливаем dir_path по умолчанию на путь к audiofiles в текущем каталоге
         if dir_path is None:
             dir_path = os.path.join(os.getcwd(), 'audiofiles')
 
@@ -35,8 +33,6 @@ class A2FHandlers:
         else:
             print(f"Запрос не удался. Код ошибки: {response.status_code}, Сообщение: {response.text}")
             return None  # Обработка ошибки
-
-
 
     def set_track(self, a2f_player: str, file_name: str):
         """Отправляет трек на указанный A2F плеер"""
@@ -78,9 +74,53 @@ class A2FHandlers:
             print(f"Произошла ошибка: {e}")
             return None  # Обработка исключений
 
+    def remove_keys(self, a2f_instance: str):
+        # Получаем ключи
+        get_keys_url = self._host_url + '/A2F/A2E/GetKeys'  # Полный URL для получения ключей
+        payload = {
+            'a2f_instance': a2f_instance,
+            'as_timestamps': False  # Константа
+        }
+        headers = {'accept': 'application/json'}  # Заголовки запроса
 
+        try:
+            # Запрос на получение ключей
+            response = requests.post(get_keys_url, json=payload, headers=headers)
+
+            if response.status_code != 200:
+                print(f"Запрос на получение ключей не удался. Код ошибки: {response.status_code}, Сообщение: {response.text}")
+                return None
+
+            keys_response = response.json()
+            if keys_response.get("status") != "OK":
+                print("Не удалось получить ключи.")
+                return None
+
+            # Извлекаем ключи из ответа
+            keys = keys_response.get("result", [])
+
+            # Удаляем ключи
+            remove_keys_url = self._host_url + '/A2F/A2E/RemoveKeys'  # Полный URL для удаления ключей
+            payload = {
+                'a2f_instance': a2f_instance,
+                'keys': keys,  # Используем полученные ключи
+                'as_timestamps': False  # Константа
+            }
+
+            response = requests.post(remove_keys_url, json=payload, headers=headers)  # Отправка POST-запроса для удаления ключей
+
+            if response.status_code == 200:
+                return response.json()  # Возвращаем JSON-ответ
+            else:
+                print(f"Запрос на удаление ключей не удался. Код ошибки: {response.status_code}, Сообщение: {response.text}")
+                return None  # Обработка ошибки
+        except Exception as e:
+            print(f"Произошла ошибка: {e}")
+            return None  # Обработка исключений
 
 if __name__ == '__main__':
-    a2fHandler = A2FHandlers(host_url="http://192.168.8.104:8011")
-    result = a2fHandler.play(a2f_player="/World/LazyGraph/Player")
-    print(result)
+    a2f_player_path = "/World/audio2face/Player"
+    a2fHandler = A2FHandlers(host_url="http://localhost:8011/")
+    a2fHandler.set_root_path(a2f_player=a2f_player_path)
+    
+    result = a2fHandler.play(a2f_player=a2f_player_path)

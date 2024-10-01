@@ -10,8 +10,12 @@ def text_to_speach(user_message: str):
     tts.save("output.mp3")
 
 def to_wav(path_to_mp3: str):
-    # Генерируем имя файла с расширением .wav
-    path_to_wav = os.path.splitext(path_to_mp3)[0] + ".wav"
+    # Создаем папку audiofiles, если она не существует
+    output_dir = "audiofiles"
+    os.makedirs(output_dir, exist_ok=True)
+
+    # Генерируем имя файла с расширением .wav в папке audiofiles
+    path_to_wav = os.path.join(output_dir, os.path.splitext(os.path.basename(path_to_mp3))[0] + ".wav")
     
     # Загружаем MP3
     audio = AudioSegment.from_mp3(path_to_mp3)

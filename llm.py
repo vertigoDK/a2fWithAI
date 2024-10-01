@@ -12,5 +12,5 @@ def gemini_query(user_query: str) -> str:
     return response.text
 
 if __name__ == '__main__':
-    result: str =  gemini_query('привет как твои дела?')
+    result: str =  gemini_query('кто такой илон маск?')
     print(result)
