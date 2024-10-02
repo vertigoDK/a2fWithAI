@@ -19,14 +19,14 @@
     ```powershell
     Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
     choco install ffmpeg
-    ```
+    ``` 
 3. Клонируйте этот репозиторий: `git clone https://github.com/vertigoDK/a2fWithAI.git`
 4. Установите необходимые зависимости: `pip install -r requirements.txt`
 5. Создайте файл `.env` в корневой директории проекта и скопируйте содержимое из `EXAMPLE.env`.
 6. Получите ваш `GOOGLE_API_KEY` на [https://aistudio.google.com/app/apikey](https://aistudio.google.com/app/apikey) и вставьте его в файл `.env`.
 7. Настройте пути в файле `conf.py`:
     * `a2f_instance_path`: Путь к экземпляру Audio2Face. Его можно найти, перейдя по ссылке [http://127.0.0.1:8011/A2F/GetInstances](http://127.0.0.1:8011/A2F/GetInstances) и скопировав значение из `fullface_instances`. Например: `/World/audio2face/CoreFullface`.
-    * `a2f_player_path`: Путь к плееру Audio2Face. Его можно получить, кликнув на меш в Omniverse и скопировав путь. Например: `/World/audio2face/Player`.
+    * `a2f_player_path`: Путь к плееру Audio2Face. Его можно получить, кликнув на меш в Omniverse и скопировав путь. Либо же http://127.0.0.1:8011/A2F/Player/GetInstances Например: `/World/audio2face/Player`.
 
 
 ## Использование
