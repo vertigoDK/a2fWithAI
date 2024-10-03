@@ -1,6 +1,13 @@
 import requests
 import os
 
+"""
+voice input -> до скольки работает библиотека -> 
+
+
+
+"""
+
 class A2FHandlers:
     
     def __init__(self, host_url: str):
