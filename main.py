@@ -5,12 +5,16 @@ from llm import gemini_query
 from a2fhandlers import A2FHandlers
 import threading
 import speech_recognition as sr
+from settings import Settings
 
 class SpeechRecognitionApp:
     def __init__(self, root):
+        self._settings = Settings()
+        
         self.root = root
         self.root.title("Speech Recognition App")
         self.root.geometry("600x400")
+
 
         ctk.set_appearance_mode("System")
         ctk.set_default_color_theme("blue")
@@ -95,7 +99,7 @@ class SpeechRecognitionApp:
 
         # Замеряем время выполнения запроса к LLM
         start_time = time.time()
-        llm_response: str = gemini_query(user_query=user_query)
+        llm_response: str = gemini_query(user_query=user_query, settings=self._settings)
         llm_time = time.time() - start_time
         self.log_debug(f"Время выполнения запроса к LLM: {llm_time:.2f} секунд")
 

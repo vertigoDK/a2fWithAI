@@ -1,13 +1,14 @@
 import google.generativeai as genai
 from dotenv import load_dotenv
 import os
+from settings import Settings
+from typing import Dict, Union
 
 load_dotenv()
 
-# Храним последние 10 сообщений в глобальной переменной
+
 context_history = []
 
-# Функция для чтения базы знаний из файла
 def load_knowledge_base(file_path='data.txt'):
     try:
         with open(file_path, 'r', encoding='utf-8') as file:
@@ -16,19 +17,16 @@ def load_knowledge_base(file_path='data.txt'):
     except FileNotFoundError:
         return "База знаний не найдена."
 
-# Читаем базу знаний при запуске
 knowledge_base = load_knowledge_base()
 
-def gemini_query(user_query: str) -> str:
+def gemini_query(user_query: str, settings: Settings) -> str:
     genai.configure(api_key=os.getenv('GOOGLE_API_KEY'))
-    model = genai.GenerativeModel(model_name="gemini-1.5-flash")
+    current_settings: dict = settings.get_settings()
+    model = genai.GenerativeModel(model_name=current_settings['model_name'])
 
-    # Добавляем новое сообщение пользователя в историю
     context_history.append(f"Запрос: {user_query}")
     
-    # Генерируем ответ AI
-    response = model.generate_content(f"""Ответ должен быть кратким, без знаков препинания, специальных символов и пояснений в скобках, так как текст будет озвучиваться. Пожалуйста, выводите только то, что должно быть произнесено, без лишних символов.
-    ОТВЕЧАЙ КАК МОЖНО КРАТЧЕ БЕЗ ЭМОДЗИ, используй контекст и базу знаний что бы давать как можно более релеватные ответ:
+    response = model.generate_content(f"""{current_settings['system_prompt']}
     Контекст предыдущих сообщений:
     {generate_context()}
     
@@ -42,14 +40,12 @@ def gemini_query(user_query: str) -> str:
     
     Новый запрос: {user_query}""")
 
-    # Добавляем ответ AI в историю
-    context_history.append(f"Ответ: {response.text.strip()}")  # Добавляем ответ без лишних пробелов
+    context_history.append(f"Ответ: {response.text.strip()}") 
 
     return response.text
 
 def generate_context() -> str:
-    # Формируем контекст из истории
-    return "\n".join(context_history[-10:])  # Ограничиваем историю 10 последними сообщениями
+    return "\n".join(context_history[-10:])
 
 if __name__ == '__main__':
     result: str = gemini_query('привет')
