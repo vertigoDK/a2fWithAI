@@ -139,10 +139,32 @@ class ChatApp(ctk.CTk):
             self.system_prompt_entry.delete("1.0", ctk.END)
             self.system_prompt_entry.insert("1.0", self.settings._system_prompt)
 
-    def on_close(self):
-        self.destroy()  # Завершаем работу приложения
+    async def close_app(self):
+        pending = asyncio.all_tasks()  # Получаем все запущенные задачи
 
-# Запускаем приложение
+        # Отменяем только те задачи, которые еще не завершены
+        for task in pending:
+            if not task.done():
+                task.cancel()
+
+        # Ждем завершения всех задач
+        await asyncio.wait(pending, return_when=asyncio.ALL_COMPLETED)
+
+        self.destroy()  # Закрываем окно
+
+    def on_close(self):
+        asyncio.create_task(self.close_app())
+
+
+
+# Запуск асинхронного цикла для приложения Tkinter
 if __name__ == "__main__":
     app = ChatApp()
-    app.mainloop() 
+    
+    # Для интеграции asyncio с tkinter, нужно запустить цикл событий asyncio отдельно
+    async def main_loop():
+        while True:
+            app.update()  # Обычный метод обновления окна tkinter
+            await asyncio.sleep(0.01)  # Небольшая задержка для асинхронности
+
+    asyncio.run(main_loop())

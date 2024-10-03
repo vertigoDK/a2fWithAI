@@ -1,6 +1,6 @@
 {
-    "model_name": "gemini-pro",
-    "model_temperature": 1.0,
+    "model_name": "gemini-1.5-flash",
+    "model_temperature": 0.0,
     "additional_data_path": [],
     "system_prompt": "\u043e\u0442\u0432\u0435\u0447\u0430\u0439 \u043e\u0447\u0435\u043d\u044c \u043f\u043e\u0434\u0440\u043e\u0431\u043d\u043e \u0438 \u0434\u0440\u0443\u0436\u0435\u043b\u044e\u0431\u043d\u043e"
 }
